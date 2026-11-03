@@ -1,0 +1,9 @@
+<header style="display: flex; justify-content: space-between; padding: 10px; background-color: #333; color: white;">
+  <div>
+    <strong>Barbearia</strong>
+  </div>
+  <nav style="display: flex; gap: 15px; align-items: center;">
+    <span *ngIf="userRole">Logado como: {{ userRole }}</span>
+    <button (click)="onLogout()" style="cursor: pointer;">Sair</button>
+  </nav>
+</header>
