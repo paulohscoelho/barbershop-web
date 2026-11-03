@@ -1,0 +1,16 @@
+<div class="login-container">
+  <h2>Login Barbearia</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" formControlName="email" />
+    </div>
+    <div>
+      <label for="password">Senha</label>
+      <input id="password" type="password" formControlName="password" />
+    </div>
+    <button type="submit" [disabled]="loginForm.invalid">Entrar</button>
+  </form>
+  
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>
