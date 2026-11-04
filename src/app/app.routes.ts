@@ -26,4 +26,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/client-dashboard/new-appointment/new-appointment').then(m => m.NewAppointmentComponent)
   },
+    {
+    path: 'my-appointments',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/client-dashboard/my-appointments/my-appointments').then(m => m.MyAppointmentsComponent)
+  },
 ];

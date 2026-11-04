@@ -1,0 +1,32 @@
+<div class="container">
+  <h2>Meus Agendamentos</h2>
+
+  @if (isLoading) {
+    <p>Carregando agendamentos...</p>
+  } @else {
+    @if (appointments.length === 0) {
+      <p style="color: gray;">Você ainda não tem agendamentos.</p>
+    }
+
+    @for (app of appointments; track app.id) {
+      <div class="appointment-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
+        <p><strong>Data:</strong> {{ app.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Serviços:</strong> {{ app.serviceNames.join(', ') }}</p>
+        <p><strong>Barbeiro:</strong> {{ app.barberName }}</p>
+        <p><strong>Status:</strong> <span [style.color]="app.status === 'CANCELADO' ? 'red' : 'green'">{{ app.status }}</span></p>
+        
+        @if (app.status !== 'CANCELADO') {
+          <button 
+            (click)="onCancel(app.id)" 
+            style="background-color: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">
+            Cancelar Agendamento
+          </button>
+        }
+      </div>
+    }
+  }
+
+  @if (errorMessage) {
+    <p style="color: red;">{{ errorMessage }}</p>
+  }
+</div>
