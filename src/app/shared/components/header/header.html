@@ -3,8 +3,16 @@
     <strong>Barbearia</strong>
   </div>
   <nav style="display: flex; gap: 15px; align-items: center;">
-    <a routerLink="/my-appointments" style="color: white; text-decoration: none; cursor: pointer;">Meus Agendamentos</a>
-    <a routerLink="/new-appointment" style="color: white; text-decoration: none; cursor: pointer;">Novo Agendamento</a>
+    
+    @if (userRole === 'CLIENT') {
+      <a routerLink="/my-appointments" style="color: white; text-decoration: none; cursor: pointer;">Meus Agendamentos</a>
+      <a routerLink="/new-appointment" style="color: white; text-decoration: none; cursor: pointer;">Novo Agendamento</a>
+    }
+
+    @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+      <a routerLink="/barber-agenda" style="color: white; text-decoration: none; cursor: pointer;">Agenda (Admin)</a>
+    }
+
     <a routerLink="/change-password" style="color: white; text-decoration: none; cursor: pointer;">Trocar Senha</a>
     
     @if (userRole) {
