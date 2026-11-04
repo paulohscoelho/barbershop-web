@@ -1,0 +1,42 @@
+<div class="container">
+  <h2>Novo Agendamento</h2>
+
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+    
+    <div class="form-group">
+      <label>Escolha o Barbeiro:</label>
+      <select formControlName="barberId">
+        <option *ngFor="let barber of barbers" [value]="barber.id">
+          {{ barber.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Data e Hora:</label>
+      <input type="datetime-local" formControlName="startTime" />
+    </div>
+
+    <h3>Escolha os Serviços:</h3>
+    <div class="services-list">
+      <div *ngFor="let service of services" class="service-item">
+        <label>
+          <input type="checkbox" (change)="onServiceToggle(service, $event)" />
+          {{ service.name }} - R$ {{ service.price }} ({{ service.durationMinutes }} min)
+        </label>
+      </div>
+    </div>
+
+    <div class="resumo">
+      <h3>Estimativa Total:</h3>
+      <p>Tempo: {{ totalDuration }} minutos</p>
+      <p>Valor: R$ {{ totalPrice }}</p>
+    </div>
+
+    <button type="submit" [disabled]="appointmentForm.invalid || selectedServiceIds.length === 0">
+      Confirmar Agendamento
+    </button>
+  </form>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

@@ -20,5 +20,10 @@ export const routes: Routes = [
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'
-  }
+  },
+  {
+    path: 'new-appointment',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/client-dashboard/new-appointment/new-appointment').then(m => m.NewAppointmentComponent)
+  },
 ];
