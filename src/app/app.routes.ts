@@ -31,4 +31,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/client-dashboard/my-appointments/my-appointments').then(m => m.MyAppointmentsComponent)
   },
+    {
+    path: 'barber-agenda',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/admin-dashboard/barber-agenda/barber-agenda').then(m => m.BarberAgendaComponent)
+  },
 ];

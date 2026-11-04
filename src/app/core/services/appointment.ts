@@ -16,4 +16,12 @@ export class AppointmentService {
   cancelAppointment(id: string): Observable<any> {
     return this.http.patch<any>(`${this.API_URL}/${id}/cancel`, {});
   }
+
+    getBarberAppointments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/barber`);
+  }
+
+  completeAppointment(id: string): Observable<any> {
+    return this.http.patch<any>(`${this.API_URL}/${id}/complete`, {});
+  }
 }
