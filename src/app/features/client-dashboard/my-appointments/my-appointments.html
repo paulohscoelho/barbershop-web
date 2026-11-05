@@ -1,13 +1,26 @@
 <div class="container">
   <h2>Meus Agendamentos</h2>
 
-  @if (userProfile) {
-    <div style="background: #fff3e0; border: 1px solid #ffe0b2; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+    @if (userProfile) {
+    <div [style.background-color]="userProfile.loyaltyCount >= barberGoal ? '#e8f5e9' : '#fff3e0'" 
+         [style.border-color]="userProfile.loyaltyCount >= barberGoal ? '#81c784' : '#ffe0b2'"
+         style="border: 1px solid; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
       <div>
-        <h3 style="margin: 0; color: #e65100;">Cartão Fidelidade</h3>
-        <p style="margin: 5px 0 0 0; color: #555;">A cada {{ barberGoal }} cortes, você ganha 1 grátis!</p>
+        <h3 [style.color]="userProfile.loyaltyCount >= barberGoal ? '#2e7d32' : '#e65100'" style="margin: 0;">
+          {{ userProfile.loyaltyCount >= barberGoal ? 'Parabéns! Você tem um prêmio!' : 'Cartão Fidelidade' }}
+        </h3>
+        
+        @if (userProfile.loyaltyCount >= barberGoal) {
+          <p style="margin: 5px 0 0 0; color: #2e7d32; font-weight: bold;">
+            Seu próximo <strong>Corte de Cabelo</strong> é grátis! (Somente o corte de cabelo !)
+          </p>
+        } @else {
+          <p style="margin: 5px 0 0 0; color: #555;">
+            A cada {{ barberGoal }} cortes, você ganha 1 <strong>Corte de Cabelo</strong> grátis!
+          </p>
+        }
       </div>
-      <div style="font-size: 32px; font-weight: bold; color: #e65100;">
+      <div [style.color]="userProfile.loyaltyCount >= barberGoal ? '#2e7d32' : '#e65100'" style="font-size: 32px; font-weight: bold;">
         {{ userProfile.loyaltyCount }} / {{ barberGoal }}
       </div>
     </div>

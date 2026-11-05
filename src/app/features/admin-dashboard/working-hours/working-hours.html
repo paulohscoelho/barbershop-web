@@ -51,21 +51,29 @@
     <hr style="border: 1px solid #eee; margin-bottom: 30px;">
 
     <h3 style="margin-bottom: 10px;">Exceções e Datas Especiais</h3>
-    <p style="color: #666; margin-bottom: 20px;">Configure feriados fechados (ex: Natal) ou dias com horário estendido (ex: Carnaval).</p>
+    <p style="color: #666; margin-bottom: 20px;">Configure feriados, férias ou dias com horário estendido.</p>
 
     <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
       <form [formGroup]="specialForm" (ngSubmit)="addSpecialSchedule()" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        
         <div>
-          <label style="display: block; font-size: 12px; font-weight: bold;">Data</label>
-          <input type="date" formControlName="exceptionDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          <label style="display: block; font-size: 12px; font-weight: bold;">Data Início</label>
+          <input type="date" formControlName="startDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
+
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: bold;">Data Fim</label>
+          <input type="date" formControlName="endDate" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
         <div>
           <label style="display: block; font-size: 12px; font-weight: bold;">Tipo</label>
           <select formControlName="isClosed" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-            <option [ngValue]="true">Fechado o dia todo</option>
+            <option [ngValue]="true">Fechado (Férias/Feriado)</option>
             <option [ngValue]="false">Horário Especial</option>
           </select>
         </div>
+
         @if (!specialForm.value.isClosed) {
           <div>
             <label style="display: block; font-size: 12px; font-weight: bold;">Início</label>
@@ -76,10 +84,12 @@
             <input type="time" formControlName="endTime" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
           </div>
         }
+
         <div style="flex: 1;">
           <label style="display: block; font-size: 12px; font-weight: bold;">Descrição (Opcional)</label>
-          <input type="text" formControlName="description" placeholder="Ex: Natal, Carnaval..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+          <input type="text" formControlName="description" placeholder="Ex: Férias de Verão, Natal..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
         </div>
+
         <button type="submit" style="padding: 9px 20px; background-color: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
           Adicionar
         </button>
@@ -89,14 +99,22 @@
     @for (special of specialSchedules; track special.id) {
       <div style="border-left: 4px solid {{ special.isClosed ? '#f44336' : '#2196F3' }}; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
         <div>
-          <strong>{{ special.exceptionDate | date:'dd/MM/yyyy' }}</strong> - {{ special.description || 'Sem descrição' }}<br>
+          <strong style="color: #333;">
+            {{ special.startDate | date:'dd/MM/yyyy' }} até {{ special.endDate | date:'dd/MM/yyyy' }}
+          </strong> 
+          - {{ special.description || 'Sem descrição' }}
+          <br>
+          
           @if (special.isClosed) {
-            <span style="color: #d32f2f; font-weight: bold; font-size: 14px;">Fechado</span>
+            <span style="color: #d32f2f; font-weight: bold; font-size: 14px;">Fechado (Indisponível para agendamento)</span>
           } @else {
             <span style="color: #1565c0; font-size: 14px;">Aberto das {{ special.startTime.substring(0,5) }} às {{ special.endTime.substring(0,5) }}</span>
           }
         </div>
-        <button (click)="removeSpecialSchedule(special.id)" style="background: none; border: none; color: #f44336; font-weight: bold; cursor: pointer;">Excluir</button>
+        
+        <button (click)="removeSpecialSchedule(special.id)" style="background: none; border: none; color: #f44336; font-weight: bold; cursor: pointer;">
+          Excluir
+        </button>
       </div>
     }
   }
