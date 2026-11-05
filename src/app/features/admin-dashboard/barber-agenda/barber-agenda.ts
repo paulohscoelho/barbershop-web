@@ -25,6 +25,7 @@ export class BarberAgendaComponent implements OnInit {
 
   statusFilter: string = 'AGENDADO';
   searchName: string = '';
+  dateFilter: string = '';
   stats: any = { agendados: 0, finalizados: 0, cancelados: 0 };
 
   private searchSubject = new Subject<string>();
@@ -55,7 +56,7 @@ export class BarberAgendaComponent implements OnInit {
     this.isLoading = true;
     this.cdr.detectChanges();
 
-    this.appointmentService.getBarberAppointments(page, 10, this.statusFilter, this.searchName).subscribe({
+    this.appointmentService.getBarberAppointments(page, 10, this.statusFilter, this.searchName, this.dateFilter).subscribe({
       next: (response) => {
         this.appointments = response.content;
         this.currentPage = response.number;

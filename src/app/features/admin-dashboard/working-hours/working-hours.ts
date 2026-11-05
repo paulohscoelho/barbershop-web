@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
+import { AppointmentService } from '../../../core/services/appointment';
 
 interface DaySchedule {
   dayOfWeek: number;
@@ -16,12 +17,14 @@ interface DaySchedule {
 @Component({
   selector: 'app-working-hours',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './working-hours.html',
   styleUrl: './working-hours.scss'
 })
 export class WorkingHoursComponent implements OnInit {
   private http = inject(HttpClient);
+  private appointmentService = inject(AppointmentService);
+  private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private readonly API_URL = 'http://localhost:8080/api/working-hours';
 
@@ -35,12 +38,23 @@ export class WorkingHoursComponent implements OnInit {
     { dayOfWeek: 7, name: 'Domingo', active: false, startTime: '10:00', endTime: '19:00', lunchStartTime: null, lunchEndTime: null }
   ];
 
+  specialSchedules: any[] = [];
+  
+  specialForm = this.fb.group({
+    exceptionDate: ['', Validators.required],
+    isClosed: [true],
+    startTime: ['08:00'],
+    endTime: ['22:00'],
+    description: ['']
+  });
+
   isLoading: boolean = true;
   message: string | null = null;
   isError: boolean = false;
 
   ngOnInit() {
     this.loadWorkingHours();
+    this.loadSpecialSchedules();
   }
 
   loadWorkingHours() {
@@ -72,6 +86,15 @@ export class WorkingHoursComponent implements OnInit {
     });
   }
 
+  loadSpecialSchedules() {
+    this.appointmentService.getSpecialSchedules().subscribe({
+      next: (data) => {
+        this.specialSchedules = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   save() {
     this.message = null;
     const payload = this.schedule
@@ -87,7 +110,7 @@ export class WorkingHoursComponent implements OnInit {
     this.http.post(this.API_URL, payload).subscribe({
       next: () => {
         this.isError = false;
-        this.message = 'Horários salvos com sucesso!';
+        this.message = 'Horários padrão salvos com sucesso!';
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -96,5 +119,34 @@ export class WorkingHoursComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  addSpecialSchedule() {
+    if (this.specialForm.valid) {
+      const val = this.specialForm.value;
+      const payload = {
+        exceptionDate: val.exceptionDate,
+        isClosed: val.isClosed,
+        startTime: val.isClosed ? null : val.startTime + ':00',
+        endTime: val.isClosed ? null : val.endTime + ':00',
+        description: val.description
+      };
+      
+      this.appointmentService.createSpecialSchedule(payload).subscribe({
+        next: () => {
+          this.loadSpecialSchedules();
+          this.specialForm.reset({ isClosed: true, startTime: '08:00', endTime: '22:00' });
+        },
+        error: (err) => alert(err.error?.erro || 'Erro ao adicionar exceção.')
+      });
+    }
+  }
+
+  removeSpecialSchedule(id: string) {
+    if (confirm('Apagar esta exceção?')) {
+      this.appointmentService.deleteSpecialSchedule(id).subscribe({
+        next: () => this.loadSpecialSchedules()
+      });
+    }
   }
 }
