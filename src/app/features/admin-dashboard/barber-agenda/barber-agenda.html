@@ -1,11 +1,42 @@
-<div class="container">
-  <h2>Agenda do Barbeiro</h2>
+<div class="container" style="max-width: 1000px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+  
+  <h2 style="margin-bottom: 20px;">Agenda do Barbeiro</h2>
+
+  <div style="display: flex; gap: 15px; margin-bottom: 30px;">
+    <div style="flex: 1; background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center;">
+      <h3 style="margin: 0; color: #2e7d32;">Agendados</h3>
+      <p style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">{{ stats.agendados }}</p>
+    </div>
+    <div style="flex: 1; background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+      <h3 style="margin: 0; color: #e65100;">Finalizados</h3>
+      <p style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">{{ stats.finalizados }}</p>
+    </div>
+    <div style="flex: 1; background: #ffebee; padding: 15px; border-radius: 8px; text-align: center;">
+      <h3 style="margin: 0; color: #c62828;">Cancelados</h3>
+      <p style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">{{ stats.cancelados }}</p>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <label style="font-weight: bold; margin-right: 10px;">Filtrar por Status:</label>
+      <select [(ngModel)]="statusFilter" (change)="onFilterChange()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+        <option value="">Todos</option>
+        <option value="AGENDADO">Agendados</option>
+        <option value="FINALIZADO">Finalizados</option>
+        <option value="CANCELADO">Cancelados</option>
+      </select>
+    </div>
+    <span style="background-color: #333; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
+      Resultados: {{ totalElements }}
+    </span>
+  </div>
 
   @if (isLoading) {
     <p>Carregando agenda...</p>
   } @else {
     @if (appointments.length === 0) {
-      <p style="color: gray;">Nenhum agendamento para hoje.</p>
+      <p style="color: gray;">Nenhum agendamento encontrado com este filtro.</p>
     }
 
     @for (app of appointments; track app.id) {
@@ -16,12 +47,32 @@
         <p><strong>Status:</strong> <span style="font-weight: bold;" [style.color]="app.status === 'FINALIZADO' ? 'blue' : (app.status === 'CANCELADO' ? 'red' : 'green')">{{ app.status }}</span></p>
         
         @if (app.status === 'AGENDADO' || app.status === 'CONFIRMADO') {
-          <button 
-            (click)="onComplete(app.id)" 
-            style="background-color: green; color: white; padding: 5px 10px; border: none; cursor: pointer;">
-            Marcar como Concluído
-          </button>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button 
+              (click)="onComplete(app.id)" 
+              style="background-color: green; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold;">
+              Marcar como Concluído
+            </button>
+            
+            <button 
+              (click)="onCancel(app.id)" 
+              style="background-color: #d32f2f; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold;">
+              Cancelar Agendamento
+            </button>
+          </div>
         }
+      </div>
+    }
+
+    @if (totalPages > 1) {
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px;">
+        <button (click)="prevPage()" [disabled]="currentPage === 0" style="padding: 10px 20px; cursor: pointer; border-radius: 4px;">
+          Anterior
+        </button>
+        <span>Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages - 1" style="padding: 10px 20px; cursor: pointer; border-radius: 4px;">
+          Próxima
+        </button>
       </div>
     }
   }
