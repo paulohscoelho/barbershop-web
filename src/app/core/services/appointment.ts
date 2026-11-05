@@ -9,16 +9,24 @@ export class AppointmentService {
   private readonly API_URL = 'http://localhost:8080/api/appointments';
   private http = inject(HttpClient);
 
-  getMyAppointments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/client`);
+  getMyAppointments(page: number = 0, size: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/client?page=${page}&size=${size}`);
+  }
+
+  getBarberAppointments(page: number = 0, size: number = 10, status: string = ''): Observable<any> {
+    let url = `${this.API_URL}/barber?page=${page}&size=${size}`;
+    if (status) {
+      url += `&status=${status}`;
+    }
+    return this.http.get<any>(url);
+  }
+
+  getBarberStats(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/barber/stats`);
   }
 
   cancelAppointment(id: string): Observable<any> {
     return this.http.patch<any>(`${this.API_URL}/${id}/cancel`, {});
-  }
-
-    getBarberAppointments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/barber`);
   }
 
   completeAppointment(id: string): Observable<any> {

@@ -21,20 +21,20 @@ export class MyAppointmentsComponent implements OnInit {
     this.loadAppointments();
   }
 
-  loadAppointments() {
+    loadAppointments() {
     this.isLoading = true;
-    this.cdr.detectChanges(); // Avisa que o loading começou
+    this.cdr.detectChanges();
 
     this.appointmentService.getMyAppointments().subscribe({
       next: (data) => {
-        this.appointments = data;
+        this.appointments = data.content;
         this.isLoading = false;
-        this.cdr.detectChanges(); // Avisa o Angular para desenhar a lista na tela!
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.errorMessage = "Erro ao carregar agendamentos.";
         this.isLoading = false;
-        this.cdr.detectChanges(); // Avisa o Angular para desenhar o erro
+        this.cdr.detectChanges();
       }
     });
   }
