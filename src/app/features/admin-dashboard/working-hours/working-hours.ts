@@ -41,7 +41,8 @@ export class WorkingHoursComponent implements OnInit {
   specialSchedules: any[] = [];
   
   specialForm = this.fb.group({
-    exceptionDate: ['', Validators.required],
+    startDate: ['', Validators.required],
+    endDate: ['', Validators.required],
     isClosed: [true],
     startTime: ['08:00'],
     endTime: ['22:00'],
@@ -125,12 +126,13 @@ export class WorkingHoursComponent implements OnInit {
     if (this.specialForm.valid) {
       const val = this.specialForm.value;
       const payload = {
-        exceptionDate: val.exceptionDate,
-        isClosed: val.isClosed,
-        startTime: val.isClosed ? null : val.startTime + ':00',
-        endTime: val.isClosed ? null : val.endTime + ':00',
-        description: val.description
-      };
+    startDate: val.startDate,
+    endDate: val.endDate,
+    isClosed: val.isClosed,
+    startTime: val.isClosed ? null : val.startTime + ':00',
+    endTime: val.isClosed ? null : val.endTime + ':00',
+    description: val.description
+  };
       
       this.appointmentService.createSpecialSchedule(payload).subscribe({
         next: () => {

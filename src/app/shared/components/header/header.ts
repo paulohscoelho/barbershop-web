@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink], 
+  imports: [RouterLink, CommonModule],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
@@ -14,6 +15,16 @@ export class Header {
   private router = inject(Router);
 
   userRole = this.authService.getUserRole();
+  isLoginPage = false;
+
+  constructor() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isLoginPage = event.url === '/login' || event.url === '/';
+        this.userRole = this.authService.getUserRole(); 
+      }
+    });
+  }
 
   onLogout() {
     this.authService.logout();
