@@ -1,42 +1,65 @@
-<div class="container">
+<div class="container" style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
   <h2>Novo Agendamento</h2>
 
-  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="appointmentForm">
     
-    <div class="form-group">
-      <label>Escolha o Barbeiro:</label>
-      <select formControlName="barberId">
-        <option *ngFor="let barber of barbers" [value]="barber.id">
-          {{ barber.name }}
-        </option>
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; font-weight: bold;">Escolha o Barbeiro:</label>
+      <select formControlName="barberId" (change)="checkAvailability()" style="width: 100%; padding: 8px;">
+        @for (barber of barbers; track barber.id) {
+          <option [value]="barber.id">{{ barber.name }}</option>
+        }
       </select>
     </div>
 
-    <div class="form-group">
-      <label>Data e Hora:</label>
-      <input type="datetime-local" formControlName="startTime" />
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; font-weight: bold;">Escolha a Data:</label>
+      <input type="date" formControlName="date" (change)="onDateChange()" style="width: 100%; padding: 8px;" />
     </div>
 
     <h3>Escolha os Serviços:</h3>
-    <div class="services-list">
-      <div *ngFor="let service of services" class="service-item">
-        <label>
+    <div style="margin-bottom: 15px;">
+      @for (service of services; track service.id) {
+        <label style="display: block; margin-bottom: 5px;">
           <input type="checkbox" (change)="onServiceToggle(service, $event)" />
           {{ service.name }} - R$ {{ service.price }} ({{ service.durationMinutes }} min)
         </label>
+      }
+    </div>
+
+    <div style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+      <p style="margin: 0;"><strong>Tempo Estimado:</strong> {{ totalDuration }} minutos</p>
+      <p style="margin: 0;"><strong>Valor Total:</strong> R$ {{ totalPrice }}</p>
+    </div>
+
+    @if (availableSlots.length > 0) {
+      <h3>Horários Disponíveis:</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+        @for (slot of availableSlots; track slot) {
+          <button 
+            type="button"
+            (click)="selectTime(slot)"
+            [style.background-color]="selectedTime === slot ? '#4CAF50' : '#e0e0e0'"
+            [style.color]="selectedTime === slot ? 'white' : 'black'"
+            style="padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            {{ slot }}
+          </button>
+        }
       </div>
-    </div>
+    } @else if (appointmentForm.value.date && selectedServiceIds.length > 0) {
+      <p style="color: gray;">Nenhum horário disponível para esta data. Tente outro dia.</p>
+    }
 
-    <div class="resumo">
-      <h3>Estimativa Total:</h3>
-      <p>Tempo: {{ totalDuration }} minutos</p>
-      <p>Valor: R$ {{ totalPrice }}</p>
-    </div>
-
-    <button type="submit" [disabled]="appointmentForm.invalid || selectedServiceIds.length === 0">
+    <button 
+      type="button"
+      (click)="onSubmit()" 
+      [disabled]="!selectedTime"
+      style="width: 100%; padding: 15px; background-color: #2196F3; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
       Confirmar Agendamento
     </button>
   </form>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  @if (errorMessage) {
+    <p style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
+  }
 </div>

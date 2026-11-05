@@ -25,4 +25,9 @@ export class BookingService {
   createAppointment(data: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/appointments`, data);
   }
+
+    getAvailableSlots(barberId: string, date: string, serviceIds: string[]): Observable<string[]> {
+    const servicesParam = serviceIds.join(',');
+    return this.http.get<string[]>(`${this.API_URL}/appointments/available-slots?barberId=${barberId}&date=${date}&serviceIds=${servicesParam}`);
+  }
 }
