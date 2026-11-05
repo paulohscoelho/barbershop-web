@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BarberService } from '../models/booking.model';
 
@@ -14,20 +14,32 @@ export class BookingService {
     return this.http.get<BarberService[]>(`${this.API_URL}/services`);
   }
 
+  getAdminServices(): Observable<BarberService[]> {
+    return this.http.get<BarberService[]>(`${this.API_URL}/services/admin`);
+  }
+
+  createService(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/services`, data);
+  }
+
+  updateService(id: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/services/${id}`, data);
+  }
+
+  deactivateService(id: string): Observable<any> {
+    return this.http.patch<any>(`${this.API_URL}/services/${id}/deactivate`, {});
+  }
+
   getBarbers(): Observable<any[]> {
-    // Forçando o envio do token manualmente
-    const token = localStorage.getItem('barbershop_token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    
-    return this.http.get<any[]>(`${this.API_URL}/users/barbers`, { headers });
+    return this.http.get<any[]>(`${this.API_URL}/users/barbers`);
+  }
+
+  getAvailableSlots(barberId: string, date: string, serviceIds: string[]): Observable<string[]> {
+    const servicesParam = serviceIds.join(',');
+    return this.http.get<string[]>(`${this.API_URL}/appointments/available-slots?barberId=${barberId}&date=${date}&serviceIds=${servicesParam}`);
   }
 
   createAppointment(data: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/appointments`, data);
-  }
-
-    getAvailableSlots(barberId: string, date: string, serviceIds: string[]): Observable<string[]> {
-    const servicesParam = serviceIds.join(',');
-    return this.http.get<string[]>(`${this.API_URL}/appointments/available-slots?barberId=${barberId}&date=${date}&serviceIds=${servicesParam}`);
   }
 }

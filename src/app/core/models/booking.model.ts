@@ -1,8 +1,11 @@
 export interface BarberService {
   id: string;
   name: string;
+  description: string;
   durationMinutes: number;
   price: number;
+  active: boolean;
+  sortOrder: number;
 }
 
 export interface Barber {

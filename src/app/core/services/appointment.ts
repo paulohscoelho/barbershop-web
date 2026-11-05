@@ -13,11 +13,11 @@ export class AppointmentService {
     return this.http.get<any>(`${this.API_URL}/client?page=${page}&size=${size}`);
   }
 
-  getBarberAppointments(page: number = 0, size: number = 10, status: string = ''): Observable<any> {
+    getBarberAppointments(page: number = 0, size: number = 10, status: string = '', clientName: string = ''): Observable<any> {
     let url = `${this.API_URL}/barber?page=${page}&size=${size}`;
-    if (status) {
-      url += `&status=${status}`;
-    }
+    if (status) url += `&status=${status}`;
+    if (clientName) url += `&clientName=${encodeURIComponent(clientName)}`;
+    
     return this.http.get<any>(url);
   }
 
