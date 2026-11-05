@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthenticationDTO, TokenResponseDTO } from '../models/user.model';
+import { AuthenticationDTO, TokenResponseDTO, User } from '../models/user.model';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -37,5 +37,13 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+    getMyProfile(): Observable<User> {
+    return this.http.get<User>(`${this.API_URL}/users/me`);
+  }
+
+  updateLoyaltyGoal(goal: number): Observable<User> {
+    return this.http.patch<User>(`${this.API_URL}/users/loyalty-goal?goal=${goal}`, {});
   }
 }

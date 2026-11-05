@@ -41,5 +41,10 @@ export const routes: Routes = [
     redirectTo: '/login',
     pathMatch: 'full'
   },
+  {
+    path: 'clients',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/admin-dashboard/client-management/client-management').then(m => m.ClientManagementComponent)
+  },
     
 ];

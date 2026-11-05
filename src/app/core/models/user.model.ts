@@ -5,6 +5,7 @@ export interface User {
   phone: string;
   role: 'CLIENT' | 'BARBER' | 'ADMIN';
   loyaltyCount: number;
+  loyaltyGoal: number; 
 }
 
 export interface AuthenticationDTO {

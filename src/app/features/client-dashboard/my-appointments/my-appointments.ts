@@ -1,6 +1,9 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppointmentService } from '../../../core/services/appointment';
+import { AuthService } from '../../../core/services/auth.service';
+import { BookingService } from '../../../core/services/booking';
 import { CommonModule } from '@angular/common';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-my-appointments',
@@ -11,17 +14,34 @@ import { CommonModule } from '@angular/common';
 })
 export class MyAppointmentsComponent implements OnInit {
   private appointmentService = inject(AppointmentService);
-  private cdr = inject(ChangeDetectorRef); // Injetando o detector de mudanças
+  private authService = inject(AuthService);
+  private bookingService = inject(BookingService);
+  private cdr = inject(ChangeDetectorRef);
 
   appointments: any[] = [];
   errorMessage: string | null = null;
   isLoading: boolean = true;
+  
+  userProfile: User | null = null;
+  barberGoal: number = 10;
 
   ngOnInit() {
     this.loadAppointments();
+    
+    this.authService.getMyProfile().subscribe(data => {
+      this.userProfile = data;
+      this.cdr.detectChanges();
+    });
+
+    this.bookingService.getBarbers().subscribe(barbers => {
+      if (barbers.length > 0) {
+        this.barberGoal = barbers[0].loyaltyGoal;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-    loadAppointments() {
+  loadAppointments() {
     this.isLoading = true;
     this.cdr.detectChanges();
 
