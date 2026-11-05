@@ -17,15 +17,27 @@
     </div>
   </div>
 
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <div>
-      <label style="font-weight: bold; margin-right: 10px;">Filtrar por Status:</label>
-      <select [(ngModel)]="statusFilter" (change)="onFilterChange()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-        <option value="">Todos</option>
-        <option value="AGENDADO">Agendados</option>
-        <option value="FINALIZADO">Finalizados</option>
-        <option value="CANCELADO">Cancelados</option>
-      </select>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+    <div style="display: flex; gap: 15px; align-items: flex-end;">
+      <div>
+        <label style="font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px;">Filtrar por Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="onFilterChange()" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 150px;">
+          <option value="">Todos</option>
+          <option value="AGENDADO">Agendados</option>
+          <option value="FINALIZADO">Finalizados</option>
+          <option value="CANCELADO">Cancelados</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px;">Buscar Cliente:</label>
+        <input 
+          type="text" 
+          [(ngModel)]="searchName" 
+          (input)="onSearchChange()" 
+          placeholder="Nome do cliente..." 
+          style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 250px;" 
+        />
+      </div>
     </div>
     <span style="background-color: #333; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
       Resultados: {{ totalElements }}

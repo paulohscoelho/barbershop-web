@@ -2,6 +2,8 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppointmentService } from '../../../core/services/appointment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-barber-agenda',
@@ -22,11 +24,21 @@ export class BarberAgendaComponent implements OnInit {
   totalElements: number = 0;
 
   statusFilter: string = 'AGENDADO';
+  searchName: string = '';
   stats: any = { agendados: 0, finalizados: 0, cancelados: 0 };
+
+  private searchSubject = new Subject<string>();
 
   ngOnInit() {
     this.loadAgenda();
     this.loadStats();
+
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.loadAgenda(0);
+    });
   }
 
   loadStats() {
@@ -43,7 +55,7 @@ export class BarberAgendaComponent implements OnInit {
     this.isLoading = true;
     this.cdr.detectChanges();
 
-    this.appointmentService.getBarberAppointments(page, 10, this.statusFilter).subscribe({
+    this.appointmentService.getBarberAppointments(page, 10, this.statusFilter, this.searchName).subscribe({
       next: (response) => {
         this.appointments = response.content;
         this.currentPage = response.number;
@@ -62,6 +74,10 @@ export class BarberAgendaComponent implements OnInit {
 
   onFilterChange() {
     this.loadAgenda(0);
+  }
+
+  onSearchChange() {
+    this.searchSubject.next(this.searchName);
   }
 
   nextPage() {
