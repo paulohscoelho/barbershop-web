@@ -29,10 +29,16 @@ export class LoginComponent {
       
       this.authService.login({ email: email!, password: password! }).subscribe({
         next: () => {
-          this.router.navigate(['/dashboard']);
+          const role = this.authService.getUserRole();
+          
+          if (role === 'BARBER' || role === 'ADMIN') {
+            this.router.navigate(['/barber-agenda']);
+          } else {
+            this.router.navigate(['/my-appointments']);
+          }
         },
         error: (err) => {
-          this.errorMessage = err.error.erro || 'Erro ao tentar fazer login.';
+          this.errorMessage = err.error?.erro || 'Erro ao tentar fazer login.';
         }
       });
     }

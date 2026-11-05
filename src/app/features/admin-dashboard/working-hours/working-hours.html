@@ -1,0 +1,51 @@
+<div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+  
+  <h2 style="margin-bottom: 10px;">Horário de Funcionamento</h2>
+  <p style="color: #666; margin-bottom: 30px;">Configure os dias e horários em que você atende, incluindo o intervalo de almoço.</p>
+
+  @if (isLoading) {
+    <p>Carregando configurações...</p>
+  } @else {
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+      
+      @for (day of schedule; track day.dayOfWeek) {
+        <div style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 15px;" [style.background-color]="day.active ? '#fff' : '#f9f9f9'">
+          
+          <div style="width: 120px; font-weight: bold; color: {{ day.active ? '#333' : '#999' }};">
+            {{ day.name }}
+          </div>
+
+          <div style="width: 80px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
+              <input type="checkbox" [(ngModel)]="day.active" style="width: 16px; height: 16px; cursor: pointer;">
+              <span style="font-size: 13px; color: {{ day.active ? 'green' : '#999' }}">{{ day.active ? 'Aberto' : 'Fechado' }}</span>
+            </label>
+          </div>
+
+          <div style="display: flex; gap: 5px; align-items: center; opacity: {{ day.active ? '1' : '0.4' }};">
+            <span style="font-size: 12px; font-weight: bold; color: #555;">Trabalho:</span>
+            <input type="time" [(ngModel)]="day.startTime" [disabled]="!day.active" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <span>às</span>
+            <input type="time" [(ngModel)]="day.endTime" [disabled]="!day.active" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+
+          <div style="display: flex; gap: 5px; align-items: center; opacity: {{ day.active ? '1' : '0.4' }}; margin-left: auto;">
+            <span style="font-size: 12px; font-weight: bold; color: #d32f2f;">Almoço:</span>
+            <input type="time" [(ngModel)]="day.lunchStartTime" [disabled]="!day.active" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            <span>às</span>
+            <input type="time" [(ngModel)]="day.lunchEndTime" [disabled]="!day.active" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+      }
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px;">
+      @if (message) {
+        <span [style.color]="isError ? 'red' : 'green'" style="font-weight: bold;">{{ message }}</span>
+      }
+      <button (click)="save()" style="padding: 12px 30px; background-color: #2196F3; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;">
+        Salvar Horários
+      </button>
+    </div>
+  }
+</div>
