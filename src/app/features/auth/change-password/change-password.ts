@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { UserService } from '../../../core/services/user';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -18,11 +18,22 @@ export class ChangePasswordComponent {
 
   passwordForm = this.fb.group({
     oldPassword: ['', [Validators.required]],
-    newPassword: ['', [Validators.required, Validators.minLength(8)]]
-  });
+    newPassword: ['', [Validators.required, Validators.minLength(8)]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: this.passwordMatchValidator });
 
   message: string | null = null;
   isError: boolean = false;
+
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const newPassword = control.get('newPassword')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
+    if (newPassword !== confirmPassword) {
+      control.get('confirmPassword')?.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
 
   onSubmit() {
     if (this.passwordForm.valid) {
@@ -36,7 +47,7 @@ export class ChangePasswordComponent {
         },
         error: (err) => {
           this.isError = true;
-          this.message = err.error?.erro || "Erro ao alterar a senha. Verifique sua conexão.";
+          this.message = err.error?.erro || "Erro ao alterar a senha.";
         }
       });
     }

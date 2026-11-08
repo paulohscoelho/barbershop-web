@@ -46,4 +46,8 @@ export class AuthService {
   updateLoyaltyGoal(goal: number): Observable<User> {
     return this.http.patch<User>(`${this.API_URL}/users/loyalty-goal?goal=${goal}`, {});
   }
+
+  updateProfile(data: any): Observable<User> {
+    return this.http.patch<User>(`${this.API_URL}/users/profile`, data);
+  }
 }

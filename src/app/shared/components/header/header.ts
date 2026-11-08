@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -10,20 +11,29 @@ import { CommonModule } from '@angular/common';
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
-export class Header {
+export class Header implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  userRole = this.authService.getUserRole();
-  isLoginPage = false;
+  userRole: string | null = null;
+  showMenu: boolean = false;
 
-  constructor() {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.isLoginPage = event.url === '/login' || event.url === '/';
-        this.userRole = this.authService.getUserRole(); 
-      }
+  ngOnInit() {
+    this.updateMenuState();
+    
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updateMenuState();
     });
+  }
+
+  updateMenuState() {
+    const currentUrl = this.router.url;
+    this.userRole = this.authService.getUserRole();
+    this.showMenu = (currentUrl !== '/login' && currentUrl !== '/') && !!this.userRole;
+    this.cdr.detectChanges();
   }
 
   onLogout() {

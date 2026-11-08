@@ -1,0 +1,116 @@
+<div class="max-w-4xl mx-auto px-4 py-12 font-sans">
+  <div class="mb-8">
+    <h2 class="text-3xl font-bold text-gray-800">Meu Perfil</h2>
+    <p class="text-gray-500 mt-1">Gerencie suas informações pessoais e segurança.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+        Dados Pessoais
+      </h3>
+      
+      <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="space-y-5">
+        
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Nome Completo</label>
+          <input type="text" formControlName="name" 
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': profileForm.get('name')?.invalid && profileForm.get('name')?.touched, 'border-gray-300': profileForm.get('name')?.valid || !profileForm.get('name')?.touched}">
+          
+          @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">O nome deve ter entre 3 e 100 letras.</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">E-mail</label>
+          <input type="email" formControlName="email" 
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched, 'border-gray-300': profileForm.get('email')?.valid || !profileForm.get('email')?.touched}">
+          
+          @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">Digite um e-mail válido.</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Celular</label>
+          <input type="text" formControlName="phone" mask="(00) 00000-0000" placeholder="(11) 99999-9999"
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched, 'border-gray-300': profileForm.get('phone')?.valid || !profileForm.get('phone')?.touched}">
+          
+          @if (profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">Digite o celular com DDD.</p>
+          }
+        </div>
+        
+        <button type="submit" [disabled]="profileForm.invalid" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-2">
+          Salvar Alterações
+        </button>
+      </form>
+
+      @if (profileMessage) {
+        <div [ngClass]="profileError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'" class="mt-6 p-4 rounded-lg border text-sm font-semibold text-center">
+          {{ profileMessage }}
+        </div>
+      }
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+        Alterar Senha
+      </h3>
+      
+      <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Senha Atual</label>
+          <input type="password" formControlName="oldPassword" 
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched, 'border-gray-300': passwordForm.get('oldPassword')?.valid || !passwordForm.get('oldPassword')?.touched}">
+          @if (passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">A senha atual é obrigatória.</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Nova Senha</label>
+          <input type="password" formControlName="newPassword" 
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched, 'border-gray-300': passwordForm.get('newPassword')?.valid || !passwordForm.get('newPassword')?.touched}">
+          @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">A nova senha deve ter no mínimo 8 caracteres.</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Nova Senha</label>
+          <input type="password" formControlName="confirmPassword" 
+                 class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 focus:border-red-500': passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched, 'border-gray-300': passwordForm.get('confirmPassword')?.valid || !passwordForm.get('confirmPassword')?.touched}">
+          
+          @if (passwordForm.get('confirmPassword')?.hasError('required') && passwordForm.get('confirmPassword')?.touched) {
+            <p class="text-red-500 text-xs font-semibold mt-1">A confirmação é obrigatória.</p>
+          }
+          @if (passwordForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+            <p class="text-red-500 text-xs font-semibold mt-1">As senhas não coincidem.</p>
+          }
+        </div>
+        
+        <button type="submit" [disabled]="passwordForm.invalid" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-2">
+          Atualizar Senha
+        </button>
+      </form>
+
+      @if (passwordMessage) {
+        <div [ngClass]="passwordError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'" class="mt-6 p-4 rounded-lg border text-sm font-semibold text-center">
+          {{ passwordMessage }}
+        </div>
+      }
+    </div>
+
+  </div>
+</div>
