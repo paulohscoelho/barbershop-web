@@ -1,85 +1,96 @@
-<div class="max-w-5xl mx-auto px-4 py-8 font-sans">
-  <div class="mb-8">
+<div class="max-w-7xl mx-auto px-4 py-8 font-sans">
+  
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
     <h2 class="text-3xl font-bold text-gray-800">Catálogo de Serviços</h2>
-    <p class="text-gray-500 mt-1">Confira os serviços disponíveis na barbearia.</p>
+    
+    @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+      <button (click)="toggleInactive()" 
+              class="flex items-center gap-2 px-4 py-2 rounded-lg border font-bold text-sm transition-colors"
+              [ngClass]="showInactive ? 'bg-gray-200 border-gray-300 text-gray-700' : 'bg-white border-blue-500 text-blue-600 hover:bg-blue-50'">
+        <span>{{ showInactive ? 'Ver Apenas Ativos' : 'Ver Apenas Inativos' }}</span>
+        <span class="text-xs">{{ showInactive ? '👁️' : '👁️‍🗨️' }}</span>
+      </button>
+    }
   </div>
 
-  @if (userRole !== 'CLIENT') {
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">{{ editingId ? 'Editar Serviço' : 'Adicionar Novo Serviço' }}</h3>
-      <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="flex flex-wrap gap-4 items-end">
-        <div class="flex-1 min-w-[200px]">
+  @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+      <h3 class="text-lg font-bold text-gray-700 mb-4">{{ editingId ? 'Editar Serviço' : 'Adicionar Novo Serviço' }}</h3>
+      <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="flex flex-col md:flex-row gap-4 items-end">
+        <div class="w-full md:flex-1">
           <label class="block text-xs font-bold text-gray-600 mb-1">Nome</label>
-          <input type="text" formControlName="name" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="text" formControlName="name" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none">
         </div>
-        <div class="flex-1 min-w-[200px]">
+        <div class="w-full md:flex-1">
           <label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
-          <input type="text" formControlName="description" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="text" formControlName="description" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none">
         </div>
-        <div class="w-32">
+        <div class="w-full md:w-32">
           <label class="block text-xs font-bold text-gray-600 mb-1">Duração (min)</label>
-          <input type="number" formControlName="durationMinutes" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="number" formControlName="durationMinutes" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none">
         </div>
-        <div class="w-32">
+        <div class="w-full md:w-32">
           <label class="block text-xs font-bold text-gray-600 mb-1">Preço (R$)</label>
-          <input type="number" formControlName="price" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="number" formControlName="price" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none">
         </div>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors shadow-sm h-[46px]">
-          {{ editingId ? 'Salvar' : 'Adicionar' }}
-        </button>
-        @if (editingId) {
-          <button type="button" (click)="resetForm()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2.5 px-6 rounded-lg transition-colors h-[46px]">
-            Cancelar
+        <div class="flex gap-2 w-full md:w-auto">
+          <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+            {{ editingId ? 'Salvar' : 'Adicionar' }}
           </button>
-        }
+          @if (editingId) {
+            <button type="button" (click)="resetForm()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+              Cancelar
+            </button>
+          }
+        </div>
       </form>
     </div>
   }
 
-  @if (isLoading) {
-    <div class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
-  } @else {
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    
+    <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-            @if (userRole !== 'CLIENT') {
-              <th class="p-4 font-semibold w-16 text-center">Ordem</th>
-            }
-            <th class="p-4 font-semibold">Serviço</th>
-            <th class="p-4 font-semibold text-center">Duração</th>
-            <th class="p-4 font-semibold text-center">Preço</th>
-            @if (userRole !== 'CLIENT') {
-              <th class="p-4 font-semibold text-right">Ações</th>
+          <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm">
+            <th class="p-4 font-bold text-center">Ordem</th>
+            <th class="p-4 font-bold">Serviço</th>
+            <th class="p-4 font-bold">Duração</th>
+            <th class="p-4 font-bold">Preço</th>
+            <th class="p-4 font-bold">Status</th>
+            @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+              <th class="p-4 font-bold text-right">Ações</th>
             }
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody>
           @for (service of services; track service.id; let i = $index) {
-            <tr class="hover:bg-gray-50 transition-colors">
-              @if (userRole !== 'CLIENT') {
-                <td class="p-4 text-center">
-                  <div class="flex flex-col items-center gap-1">
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+                <td class="p-4">
+                  <div class="flex flex-col gap-1 items-center">
                     <button (click)="moveUp(i)" [disabled]="i === 0" class="text-gray-400 hover:text-blue-600 disabled:opacity-30">⬆️</button>
                     <button (click)="moveDown(i)" [disabled]="i === services.length - 1" class="text-gray-400 hover:text-blue-600 disabled:opacity-30">⬇️</button>
                   </div>
                 </td>
               }
               <td class="p-4">
-                <span class="block font-bold text-gray-800">{{ service.name }}</span>
-                <span class="block text-xs text-gray-500 mt-0.5">{{ service.description }}</span>
+                <strong class="text-gray-800 block">{{ service.name }}</strong>
+                <span class="text-xs text-gray-500">{{ service.description }}</span>
               </td>
-              <td class="p-4 text-center text-sm text-gray-700">{{ service.durationMinutes }} min</td>
-              <td class="p-4 text-center text-sm font-bold text-green-600">R$ {{ service.price }}</td>
-              
-              @if (userRole !== 'CLIENT') {
-                <td class="p-4 text-right space-x-2">
-                  <button (click)="editService(service)" class="text-xs font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg transition-colors">Editar</button>
-                  @if (service.active) {
-                    <button (click)="deactivateService(service.id)" class="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">Inativar</button>
-                  }
+              <td class="p-4 text-gray-600">{{ service.durationMinutes }} min</td>
+              <td class="p-4 text-green-600 font-bold">R$ {{ service.price }}</td>
+              <td class="p-4">
+                <span class="px-2 py-1 rounded text-xs font-bold" [ngClass]="service.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                  {{ service.active ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+                <td class="p-4 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button (click)="editService(service)" class="bg-orange-100 text-orange-600 hover:bg-orange-200 px-3 py-1.5 rounded-lg text-sm font-bold">Editar</button>
+                    <button (click)="deleteService(service.id)" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 rounded-lg text-sm font-bold">Excluir</button>
+                  </div>
                 </td>
               }
             </tr>
@@ -87,5 +98,42 @@
         </tbody>
       </table>
     </div>
-  }
+
+    <div class="block md:hidden bg-gray-50 p-4 space-y-4">
+      @for (service of services; track service.id; let i = $index) {
+        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200 flex flex-col gap-3">
+          
+          <div class="flex justify-between items-start">
+            <div>
+              <strong class="text-gray-800 text-lg">{{ service.name }}</strong>
+              <p class="text-sm text-gray-500">{{ service.description }}</p>
+            </div>
+            <span class="px-2 py-1 rounded text-xs font-bold" [ngClass]="service.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+              {{ service.active ? 'Ativo' : 'Inativo' }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between text-sm bg-gray-50 p-2 rounded">
+            <span class="text-gray-600">⏱ {{ service.durationMinutes }} min</span>
+            <span class="text-green-600 font-bold">R$ {{ service.price }}</span>
+          </div>
+
+          @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+            <div class="flex items-center justify-between mt-2 pt-3 border-t border-gray-100">
+              <div class="flex flex-col gap-1">
+                <button (click)="moveUp(i)" [disabled]="i === 0" class="text-gray-400 hover:text-blue-600 disabled:opacity-30">⬆️</button>
+                <button (click)="moveDown(i)" [disabled]="i === services.length - 1" class="text-gray-400 hover:text-blue-600 disabled:opacity-30">⬇️</button>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="editService(service)" class="bg-orange-100 text-orange-600 px-3 py-2 rounded-lg text-sm font-bold">Editar</button>
+                <button (click)="deleteService(service.id)" class="bg-red-100 text-red-600 px-3 py-2 rounded-lg text-sm font-bold">Excluir</button>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+
+  </div>
 </div>

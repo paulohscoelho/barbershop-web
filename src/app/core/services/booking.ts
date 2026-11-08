@@ -14,8 +14,8 @@ export class BookingService {
     return this.http.get<BarberService[]>(`${this.API_URL}/services`);
   }
 
-  getAdminServices(): Observable<BarberService[]> {
-    return this.http.get<BarberService[]>(`${this.API_URL}/services/admin`);
+  getAdminServices(active: boolean = true): Observable<BarberService[]> {
+    return this.http.get<BarberService[]>(`${this.API_URL}/services/admin?active=${active}`);
   }
 
   createService(data: any): Observable<any> {
@@ -42,4 +42,10 @@ export class BookingService {
   createAppointment(data: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/appointments`, data);
   }
+
+  deleteService(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/services/${id}`);
+  }
+
+   
 }

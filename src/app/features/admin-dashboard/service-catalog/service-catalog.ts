@@ -23,6 +23,7 @@ export class ServiceCatalogComponent implements OnInit {
   editingId: string | null = null;
   errorMessage: string | null = null;
   userRole: string | null = null;
+  showInactive: boolean = false;
 
   serviceForm = this.fb.group({
     name: ['', Validators.required],
@@ -37,25 +38,43 @@ export class ServiceCatalogComponent implements OnInit {
     this.loadServices();
   }
 
-  loadServices() {
+    loadServices() {
     this.isLoading = true;
-    
-    const request = (this.userRole === 'CLIENT') 
-        ? this.bookingService.getServices() 
-        : this.bookingService.getAdminServices();
 
-    request.subscribe({
-      next: (data) => {
-        this.services = data;
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.errorMessage = "Erro ao carregar serviços.";
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+    if (this.userRole === 'CLIENT') {
+      this.bookingService.getServices().subscribe({
+        next: (data) => {
+          this.services = data;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.errorMessage = "Erro ao carregar serviços.";
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      const shouldFetchActive = !this.showInactive;
+      
+      this.bookingService.getAdminServices(shouldFetchActive).subscribe({
+        next: (data) => {
+          this.services = data;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.errorMessage = "Erro ao carregar serviços.";
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  toggleInactive() {
+    this.showInactive = !this.showInactive;
+    this.loadServices();
   }
 
   onSubmit() {
@@ -94,11 +113,16 @@ export class ServiceCatalogComponent implements OnInit {
     });
   }
 
-  deactivateService(id: string) {
-    if (confirm('Tem certeza que deseja inativar este serviço?')) {
-      this.bookingService.deactivateService(id).subscribe({
-        next: () => this.loadServices(),
-        error: (err) => this.errorMessage = "Erro ao inativar."
+  deleteService(id: string) {
+    if (confirm('Tem certeza que deseja EXCLUIR este serviço permanentemente?')) {
+      this.bookingService.deleteService(id).subscribe({
+        next: () => {
+          this.loadServices();
+          alert('Serviço excluído com sucesso!');
+        },
+        error: (err) => {
+          alert(err.error?.erro || 'Erro ao excluir o serviço.');
+        }
       });
     }
   }
