@@ -1,27 +1,42 @@
-@if (!isLoginPage) {
-  <header style="display: flex; justify-content: space-between; padding: 10px; background-color: #333; color: white; align-items: center;">
-    <div>
-      <strong>Barbearia</strong>
+@if (showMenu) {
+  <header class="bg-gray-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <div class="flex-shrink-0 flex items-center">
+          <span class="text-xl font-bold tracking-wider text-blue-400">Barbearia</span>
+        </div>
+
+        <nav class="flex items-center space-x-6">
+          @if (userRole === 'CLIENT') {
+            <a routerLink="/my-appointments" class="text-gray-300 hover:text-white transition-colors duration-200">Meus Agendamentos</a>
+            <a routerLink="/new-appointment" class="text-gray-300 hover:text-white transition-colors duration-200">Novo Agendamento</a>
+            <a routerLink="/service-catalog" class="text-gray-300 hover:text-white transition-colors duration-200">Catálogo</a>
+          }
+
+          @if (userRole === 'BARBER' || userRole === 'ADMIN') {
+            <a routerLink="/barber-agenda" class="text-gray-300 hover:text-white transition-colors duration-200">Minha Agenda</a>
+            <a routerLink="/service-catalog" class="text-gray-300 hover:text-white transition-colors duration-200">Catálogo</a>
+            <a routerLink="/working-hours" class="text-gray-300 hover:text-white transition-colors duration-200">Horários</a>
+            <a routerLink="/clients" class="text-gray-300 hover:text-white transition-colors duration-200">Meus Clientes</a>
+          }
+
+          @if (userRole) {
+            <div class="flex items-center space-x-4 border-l border-gray-700 pl-6">
+              <a routerLink="/profile" class="text-sm text-gray-400 hover:text-white transition-colors duration-200">Meu Perfil</a>
+              
+              <span class="bg-gray-800 text-xs font-semibold px-3 py-1 rounded-full border border-gray-700">
+                {{ userRole }}
+              </span>
+              
+              <button (click)="onLogout()" class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-1.5 px-4 rounded transition-colors duration-200">
+                Sair
+              </button>
+            </div>
+          }
+        </nav>
+        
+      </div>
     </div>
-    <nav style="display: flex; gap: 15px; align-items: center;">
-      
-      @if (userRole === 'CLIENT') {
-        <a routerLink="/my-appointments" style="color: white; text-decoration: none; cursor: pointer;">Meus Agendamentos</a>
-        <a routerLink="/new-appointment" style="color: white; text-decoration: none; cursor: pointer;">Novo Agendamento</a>
-      }
-
-      @if (userRole === 'BARBER' || userRole === 'ADMIN') {
-        <a routerLink="/barber-agenda" style="color: white; text-decoration: none; cursor: pointer;">Minha Agenda</a>
-        <a routerLink="/service-catalog" style="color: white; text-decoration: none; cursor: pointer;">Catálogo de Serviços</a>
-        <a routerLink="/working-hours" style="color: white; text-decoration: none; cursor: pointer;">Horários</a>
-        <a routerLink="/clients" style="color: white; text-decoration: none; cursor: pointer;">Meus Clientes</a>
-      }
-
-      @if (userRole) {
-        <a routerLink="/change-password" style="color: white; text-decoration: none; cursor: pointer;">Trocar Senha</a>
-        <span>Logado como: {{ userRole }}</span>
-        <button (click)="onLogout()" style="cursor: pointer; padding: 5px 10px;">Sair</button>
-      }
-    </nav>
   </header>
 }

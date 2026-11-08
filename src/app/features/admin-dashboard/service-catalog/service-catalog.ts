@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BookingService } from '../../../core/services/booking';
 import { BarberService } from '../../../core/models/booking.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-service-catalog',
@@ -13,6 +14,7 @@ import { BarberService } from '../../../core/models/booking.model';
 })
 export class ServiceCatalogComponent implements OnInit {
   private bookingService = inject(BookingService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
 
@@ -20,6 +22,7 @@ export class ServiceCatalogComponent implements OnInit {
   isLoading: boolean = true;
   editingId: string | null = null;
   errorMessage: string | null = null;
+  userRole: string | null = null;
 
   serviceForm = this.fb.group({
     name: ['', Validators.required],
@@ -30,12 +33,18 @@ export class ServiceCatalogComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.userRole = this.authService.getUserRole();
     this.loadServices();
   }
 
   loadServices() {
     this.isLoading = true;
-    this.bookingService.getAdminServices().subscribe({
+    
+    const request = (this.userRole === 'CLIENT') 
+        ? this.bookingService.getServices() 
+        : this.bookingService.getAdminServices();
+
+    request.subscribe({
       next: (data) => {
         this.services = data;
         this.isLoading = false;
@@ -94,11 +103,10 @@ export class ServiceCatalogComponent implements OnInit {
     }
   }
 
-    moveUp(index: number) {
+  moveUp(index: number) {
     if (index === 0) return;
     const current = this.services[index];
     const previous = this.services[index - 1];
-    
     this.swapSortOrder(current, previous);
   }
 
@@ -106,26 +114,26 @@ export class ServiceCatalogComponent implements OnInit {
     if (index === this.services.length - 1) return;
     const current = this.services[index];
     const next = this.services[index + 1];
-    
     this.swapSortOrder(current, next);
   }
 
   private swapSortOrder(current: BarberService, target: BarberService) {
-    const currentOrder = current.sortOrder;
-    const targetOrder = target.sortOrder;
+    const currentOrder = current.sortOrder ?? this.services.indexOf(current);
+    const targetOrder = target.sortOrder ?? this.services.indexOf(target);
 
-    const payloadCurrent = { ...current, sortOrder: targetOrder };
-    const payloadTarget = { ...target, sortOrder: currentOrder };
+    const payloadCurrent = { name: current.name, description: current.description, durationMinutes: current.durationMinutes, price: current.price, sortOrder: targetOrder };
+    const payloadTarget = { name: target.name, description: target.description, durationMinutes: target.durationMinutes, price: target.price, sortOrder: currentOrder };
 
-    this.bookingService.updateService(current.id, payloadCurrent).subscribe();
-    this.bookingService.updateService(target.id, payloadTarget).subscribe({
-      next: () => {
-        this.loadServices();
-      },
-      error: (err) => console.error('Erro ao reordenar', err)
+    this.bookingService.updateService(current.id, payloadCurrent).subscribe({
+        next: () => {
+            this.bookingService.updateService(target.id, payloadTarget).subscribe({
+                next: () => this.loadServices(),
+                error: (err) => console.error('Erro ao reordenar target', err)
+            });
+        },
+        error: (err) => console.error('Erro ao reordenar current', err)
     });
   }
-    
 
   resetForm() {
     this.editingId = null;

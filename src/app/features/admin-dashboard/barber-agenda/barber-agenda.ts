@@ -18,7 +18,7 @@ export class BarberAgendaComponent implements OnInit {
 
   appointments: any[] = [];
   isLoading: boolean = true;
-  
+  today: string = new Date().toISOString();
   currentPage: number = 0;
   totalPages: number = 0;
   totalElements: number = 0;
@@ -116,4 +116,5 @@ export class BarberAgendaComponent implements OnInit {
       });
     }
   }
+
 }

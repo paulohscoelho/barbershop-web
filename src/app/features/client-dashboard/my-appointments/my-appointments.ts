@@ -70,4 +70,8 @@ export class MyAppointmentsComponent implements OnInit {
       });
     }
   }
+
+  isPast(appointmentTime: string): boolean {
+    return new Date(appointmentTime).getTime() < new Date().getTime();
+  }
 }
