@@ -1,59 +1,55 @@
-# BarbershopWeb
+# Barbershop Web (Interface de Validação)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.1.
+> **Nota de Contexto do Projeto**: Este repositório contém o Frontend do sistema de barbearia. O foco principal e a complexidade arquitetural deste ecossistema estão concentrados no [Backend (barbershop-api)](https://github.com/paulohscoelho/barbershop-api). Esta interface foi construída como um **Proof of Concept (PoC)** para consumir e validar visualmente os endpoints da API, garantindo uma demonstração completa e interativa do sistema final.
 
-## Development server
+## 🎯 O Propósito da Aplicação
 
-To start a local development server, run:
+Sistemas de backend robustos (com regras complexas de concorrência, segurança e agendamento) precisam de uma interface para serem validados em um cenário real. Esta aplicação tem como objetivo:
+- Prover uma visão clara e estilo "Google Calendar" para que o cliente possa visualizar e testar a reserva de horários.
+- Demonstrar visualmente o funcionamento do dashboard administrativo do barbeiro (gestão de agenda, catálogo e clientes).
+- Servir como peça de portfólio, mostrando a integração ponta a ponta (Angular consumindo Spring Boot).
 
-```bash
-ng serve
-```
+## 🧑‍💻 Metodologia de Desenvolvimento (Frontend)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Como o objetivo central deste projeto de portfólio é demonstrar competências sólidas em **Arquitetura Backend (Java/Spring Boot)**, a construção deste frontend adotou uma abordagem de **prototipagem ágil (Rapid Prototyping) assistida por IA**.
 
-## Code scaffolding
+- **Agilidade**: O código Angular, os componentes visuais e o layout responsivo foram gerados com forte auxílio de ferramentas de IA (como ChatGPT e GitHub Copilot) e refinados manualmente. 
+- **Foco**: Essa estratégia permitiu que o tempo de estudo e desenvolvimento fosse direcionado para o que realmente importa na vaga almejada: regras de negócio complexas no backend, prevenção de *Double Booking* com transações `SERIALIZABLE`, segurança com JWT e integridade do banco de dados.
+- **Qualidade Visual**: Apesar da prototipagem rápida, utilizou-se o **Tailwind CSS** para garantir um design moderno, responsivo e com excelente experiência de usuário (UX).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## ✨ Funcionalidades Implementadas
 
-```bash
-ng generate component component-name
-```
+- **Área do Cliente**:
+  - Login e visualização do Cartão Fidelidade dinâmico.
+  - Novo agendamento com seleção de serviços e grade de horários disponíveis (consumindo a "máquina de horários" do backend).
+  - Histórico de agendamentos com opção de cancelamento.
+- **Área do Barbeiro (Admin)**:
+  - **Agenda**: Listagem paginada com filtros por data, status e nome do cliente.
+  - **Catálogo de Serviços**: CRUD completo com opção de reordenação (setas) e filtro para visualizar serviços inativos.
+  - **Horários**: Configuração de horário de funcionamento semanal e datas de exceção (férias).
+- **Segurança e Arquitetura**:
+  - Interceptor HTTP para injeção automática do Token JWT.
+  - Rotas protegidas com `AuthGuard` (baseado em Roles).
+  - Componentes Standalone (padrão moderno do Angular).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🛠️ Stack Tecnológico
 
-```bash
-ng generate --help
-```
+- **Framework**: Angular 20
+- **Linguagem**: TypeScript
+- **Estilização**: Tailwind CSS
+- **Comunicação HTTP**: HttpClient e RxJS
+- **Deploy**: Vercel
 
-## Building
+## 🚀 Como Executar o Projeto Localmente
 
-To build the project run:
+### Pré-requisitos
+- Node.js (versão 20 ou superior)
+- Angular CLI (`npm install -g @angular/cli`)
+- O backend (`barbershop-api`) rodando localmente ou a URL da API em produção configurada.
 
-```bash
-ng build
-```
+### Passos
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/paulohscoelho/barbershop-web.git
+    cd barbershop-web
