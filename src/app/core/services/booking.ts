@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BarberService } from '../models/booking.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
-  private readonly API_URL = 'http://localhost:8080/api';
+  private readonly API_URL = environment.apiUrl;
   private http = inject(HttpClient);
 
   getServices(): Observable<BarberService[]> {
@@ -47,5 +48,15 @@ export class BookingService {
     return this.http.delete<any>(`${this.API_URL}/services/${id}`);
   }
 
-   
+  getSpecialSchedules(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/special-schedules`);
+  }
+
+  createSpecialSchedule(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/special-schedules`, data);
+  }
+
+  deleteSpecialSchedule(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/special-schedules/${id}`);
+  }
 }
