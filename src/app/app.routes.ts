@@ -22,6 +22,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/change-password/change-password').then(m => m.ChangePasswordComponent)
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/auth/profile/profile').then(m => m.ProfileComponent)
+  },
+  {
     path: 'barber-agenda',
     canActivate: [authGuard],
     loadComponent: () => import('./features/admin-dashboard/barber-agenda/barber-agenda').then(m => m.BarberAgendaComponent)
@@ -37,19 +42,17 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin-dashboard/working-hours/working-hours').then(m => m.WorkingHoursComponent)
   },
   {
+    path: 'clients',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/admin-dashboard/client-management/client-management').then(m => m.ClientManagementComponent)
+  },
+  {
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'
   },
   {
-    path: 'clients',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/admin-dashboard/client-management/client-management').then(m => m.ClientManagementComponent)
-  },
-    {
-    path: 'profile',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/auth/profile/profile').then(m => m.ProfileComponent)
-  },
-    
+    path: '**',
+    redirectTo: '/login'
+  }
 ];

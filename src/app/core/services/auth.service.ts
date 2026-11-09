@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthenticationDTO, TokenResponseDTO, User } from '../models/user.model';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api';
+  private readonly API_URL = environment.apiUrl;
   private readonly TOKEN_KEY = 'barbershop_token';
   
   private http = inject(HttpClient);
@@ -35,11 +36,7 @@ export class AuthService {
     return null;
   }
 
-  logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-  }
-
-    getMyProfile(): Observable<User> {
+  getMyProfile(): Observable<User> {
     return this.http.get<User>(`${this.API_URL}/users/me`);
   }
 
@@ -49,5 +46,9 @@ export class AuthService {
 
   updateProfile(data: any): Observable<User> {
     return this.http.patch<User>(`${this.API_URL}/users/profile`, data);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 }

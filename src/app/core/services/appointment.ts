@@ -1,20 +1,21 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentService {
-  private readonly API_URL = 'http://localhost:8080/api/appointments';
+  private readonly API_URL = environment.apiUrl;
   private http = inject(HttpClient);
 
   getMyAppointments(page: number = 0, size: number = 10): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/client?page=${page}&size=${size}`);
+    return this.http.get<any>(`${this.API_URL}/appointments/client?page=${page}&size=${size}`);
   }
 
-    getBarberAppointments(page: number = 0, size: number = 10, status: string = '', clientName: string = '', date: string = ''): Observable<any> {
-    let url = `${this.API_URL}/barber?page=${page}&size=${size}`;
+  getBarberAppointments(page: number = 0, size: number = 10, status: string = '', clientName: string = '', date: string = ''): Observable<any> {
+    let url = `${this.API_URL}/appointments/barber?page=${page}&size=${size}`;
     if (status) url += `&status=${status}`;
     if (clientName) url += `&clientName=${encodeURIComponent(clientName)}`;
     if (date) url += `&date=${date}`;
@@ -23,38 +24,26 @@ export class AppointmentService {
   }
 
   getBarberStats(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/barber/stats`);
+    return this.http.get<any>(`${this.API_URL}/appointments/barber/stats`);
   }
 
   cancelAppointment(id: string): Observable<any> {
-    return this.http.patch<any>(`${this.API_URL}/${id}/cancel`, {});
+    return this.http.patch<any>(`${this.API_URL}/appointments/${id}/cancel`, {});
   }
 
   completeAppointment(id: string): Observable<any> {
-    return this.http.patch<any>(`${this.API_URL}/${id}/complete`, {});
+    return this.http.patch<any>(`${this.API_URL}/appointments/${id}/complete`, {});
   }
 
-    getBlocks(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL.replace('/appointments', '/schedule-blocks')}`);
-  }
-
-  createBlock(data: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL.replace('/appointments', '/schedule-blocks')}`, data);
-  }
-
-  deleteBlock(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL.replace('/appointments', '/schedule-blocks')}/${id}`);
-  }
-
-    getSpecialSchedules(): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8080/api/special-schedules`);
+  getSpecialSchedules(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/special-schedules`);
   }
 
   createSpecialSchedule(data: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:8080/api/special-schedules`, data);
+    return this.http.post<any>(`${this.API_URL}/special-schedules`, data);
   }
 
   deleteSpecialSchedule(id: string): Observable<any> {
-    return this.http.delete<any>(`http://localhost:8080/api/special-schedules/${id}`);
+    return this.http.delete<any>(`${this.API_URL}/special-schedules/${id}`);
   }
 }
