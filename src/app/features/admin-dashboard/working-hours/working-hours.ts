@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AppointmentService } from '../../../core/services/appointment';
+import { environment } from '../../../../environments/environment';
 
 interface DaySchedule {
   dayOfWeek: number;
@@ -26,7 +27,8 @@ export class WorkingHoursComponent implements OnInit {
   private appointmentService = inject(AppointmentService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private readonly API_URL = 'http://localhost:8080/api/working-hours';
+  
+  private readonly API_URL = `${environment.apiUrl}/working-hours`;
 
   schedule: DaySchedule[] = [
     { dayOfWeek: 1, name: 'Segunda-feira', active: true, startTime: '10:00', endTime: '19:00', lunchStartTime: '12:00', lunchEndTime: '13:00' },

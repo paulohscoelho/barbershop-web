@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-client-management',
@@ -16,7 +17,8 @@ export class ClientManagementComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
-  private readonly API_URL = 'http://localhost:8080/api/users/clients';
+  
+  private readonly API_URL = `${environment.apiUrl}/users/clients`;
 
   clients: User[] = [];
   filteredClients: User[] = [];
